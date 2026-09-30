@@ -1,0 +1,35 @@
+{
+  "name": "nova-ai-agent",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "NOVA — the personal computer AI agent. React + Vite frontend (Bun) connected to a Python LangGraph + Hugging Face backend.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "bun test",
+    "e2e": "bun run scripts/e2e.ts",
+    "typecheck": "tsc --noEmit",
+    "format": "oxfmt src scripts vite.config.ts index.html",
+    "format:check": "oxfmt --check src scripts vite.config.ts index.html",
+    "backend": "powershell -NoProfile -ExecutionPolicy Bypass -File start-windows.ps1 -BackendOnly",
+    "backend:install": "powershell -NoProfile -ExecutionPolicy Bypass -File start-windows.ps1 -InstallOnly",
+    "start:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File start-windows.ps1"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "oxfmt": "^0.70.0",
+    "typescript": "^5.7.0",
+    "vite": "^8.0.5"
+  }
+}

@@ -1,0 +1,48 @@
+# ── NOVA backend ─────────────────────────────────────────────────────────────
+# FastAPI + LangGraph + Hugging Face + Qdrant vector memory.
+FROM python:3.12-slim AS runtime
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+LABEL org.opencontainers.image.title="NOVA backend"
+LABEL org.opencontainers.image.description="NOVA AI agent API (FastAPI + LangGraph + Qdrant)"
+
+# curl is only used by the container healthcheck.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /srv/nova
+
+# Dependencies first so the layer survives source-only changes.
+COPY backend/requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
+
+COPY backend/ ./backend/
+
+# Linux container: `settings.is_windows` reports false, so Windows-only tools
+# (app control, PowerShell, where.exe/taskkill) are disabled automatically and
+# /api/apps returns `supported: false`.
+RUN useradd --create-home --uid 10001 nova \
+    && mkdir -p /srv/nova/backend/data /data/nova \
+    && chown -R nova:nova /srv/nova /data/nova
+
+USER nova
+WORKDIR /srv/nova/backend
+
+ENV NOVA_HOST=0.0.0.0 \
+    NOVA_PORT=8000 \
+    NOVA_WORKSPACE=/data/nova \
+    QDRANT_URL=http://qdrant:6333 \
+    QDRANT_LOCAL_PATH=/srv/nova/backend/data/qdrant \
+    NOVA_CORS_ORIGINS=*
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=20s --timeout=5s --start-period=15s --retries=5 \
+  CMD curl -fsS "http://127.0.0.1:${NOVA_PORT}/api/health" >/dev/null || exit 1
+
+CMD ["sh", "-c", "uvicorn nova_backend.main:app --host ${NOVA_HOST} --port ${NOVA_PORT} --proxy-headers --forwarded-allow-ips='*'"]

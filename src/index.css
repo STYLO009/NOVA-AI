@@ -1,0 +1,1226 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+
+/* ─── Design tokens ──────────────────────────────────
+   One neutral scale, one accent, three semantic colors.
+   Depth comes from layered shadows, ambient light and
+   a top-edge highlight — never from neon.
+   Radius, spacing and type share one scale.
+   ─────────────────────────────────────────────────── */
+
+:root {
+  --bg: #0a0b0d;
+  --rail: #0d0e11;
+  --surface: #111216;
+  --surface-2: #16171c;
+  --surface-3: #1d1f25;
+  --line: #212329;
+  --line-strong: #2b2e36;
+
+  --text: #e7e8ec;
+  --text-dim: #a0a5ae;
+  --text-faint: #7c818a;
+
+  --accent: #6488fa;
+  --accent-hi: #8fa7ff;
+  --accent-lo: #5274ec;
+  --accent-soft: rgba(100, 136, 250, 0.13);
+  --accent-line: rgba(100, 136, 250, 0.34);
+
+  --green: #3fbf7a;
+  --green-soft: rgba(63, 191, 122, 0.12);
+  --amber: #dfa23f;
+  --amber-soft: rgba(223, 162, 63, 0.12);
+  --red: #e5545c;
+  --red-soft: rgba(229, 84, 92, 0.12);
+
+  --r-sm: 6px;
+  --r: 10px;
+  --r-lg: 14px;
+
+  /* Layered elevation: contact shadow + ambient drop. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md:
+    0 2px 6px rgba(0, 0, 0, 0.35), 0 14px 34px -22px rgba(0, 0, 0, 0.95);
+  --shadow-lg:
+    0 4px 12px rgba(0, 0, 0, 0.4), 0 28px 60px -30px rgba(0, 0, 0, 1);
+  --shadow-pop: 0 24px 60px rgba(0, 0, 0, 0.55), 0 4px 14px rgba(0, 0, 0, 0.4);
+  --glow-accent: 0 10px 30px -12px rgba(100, 136, 250, 0.55);
+  --lift: translateY(-1px);
+  --ease: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* ─── Keyframes ────────────────────────────────────── */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.22);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes ring-out {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* A single soft highlight travelling along a filled bar. */
+@keyframes sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  55%,
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+/* Breathing halo for elements that are actively working. */
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px rgba(100, 136, 250, 0.14),
+      0 0 14px -2px rgba(100, 136, 250, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 0 7px rgba(100, 136, 250, 0.05),
+      0 0 20px -2px rgba(100, 136, 250, 0.5);
+  }
+}
+
+@keyframes halo-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+/* ─── Base ─────────────────────────────────────────── */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    sans-serif;
+}
+
+body {
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 6px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--line-strong);
+  background-clip: padding-box;
+}
+
+::selection {
+  background: rgba(100, 136, 250, 0.32);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(100, 136, 250, 0.16);
+}
+
+/* ─── Ambient light + grain ──────────────────────────
+   The app shell carries a slow colour wash so panels
+   sit in light rather than on a flat black sheet, and a
+   3% film grain keeps the dark surfaces from banding.
+   ─────────────────────────────────────────────────── */
+
+.app-root {
+  position: relative;
+  isolation: isolate;
+  /* clip, not hidden: the aurora layers overflow this box (inset -12%
+     plus animated transforms) and `hidden` would make it a scroll
+     container — incidental focus/anchor scrolling then shifts the
+     entire shell out of view. `clip` cuts the same pixels with no
+     scroll position to move. */
+  overflow: clip;
+  background:
+    radial-gradient(
+      1100px 640px at 6% -22%,
+      rgba(100, 136, 250, 0.17),
+      transparent 62%
+    ),
+    radial-gradient(
+      820px 520px at 96% -8%,
+      rgba(63, 191, 122, 0.055),
+      transparent 58%
+    ),
+    radial-gradient(
+      1000px 760px at 62% 124%,
+      rgba(100, 136, 250, 0.07),
+      transparent 64%
+    ),
+    var(--bg);
+}
+
+/* aurora — two slow colour fields drifting behind the panels.
+   Panels are translucent, so this light reads through them. */
+.app-root::before,
+.app-root::after {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      34vw 34vw at 20% 26%,
+      rgba(100, 136, 250, 0.2),
+      transparent 62%
+    ),
+    radial-gradient(
+      30vw 30vw at 76% 62%,
+      rgba(63, 191, 122, 0.11),
+      transparent 62%
+    ),
+    radial-gradient(
+      26vw 26vw at 52% 92%,
+      rgba(229, 84, 92, 0.08),
+      transparent 62%
+    );
+  animation: aurora-a 42s ease-in-out infinite alternate;
+}
+
+.app-root::after {
+  background:
+    radial-gradient(
+      28vw 28vw at 70% 18%,
+      rgba(100, 136, 250, 0.13),
+      transparent 60%
+    ),
+    radial-gradient(
+      32vw 32vw at 30% 78%,
+      rgba(163, 130, 255, 0.09),
+      transparent 60%
+    );
+  animation: aurora-b 58s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+
+@keyframes aurora-a {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(3%, 2%, 0) scale(1.1) rotate(5deg);
+  }
+  100% {
+    transform: translate3d(-3%, 3%, 0) scale(1.05) rotate(-4deg);
+  }
+}
+
+@keyframes aurora-b {
+  0% {
+    transform: translate3d(3%, 2%, 0) scale(1.06) rotate(2deg);
+  }
+  50% {
+    transform: translate3d(-3%, -3%, 0) scale(1) rotate(-5deg);
+  }
+  100% {
+    transform: translate3d(2%, -2%, 0) scale(1.12) rotate(4deg);
+  }
+}
+
+/* cursor light — a soft pool of accent light plus a dot grid that
+   only reveals itself around the pointer. --mx/--my are written from
+   App's rAF-throttled mousemove handler on <html>. */
+.spotlight {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  pointer-events: none;
+  background: radial-gradient(
+    460px circle at var(--mx, 50vw) var(--my, 34vh),
+    rgba(100, 136, 250, 0.1),
+    transparent 66%
+  );
+}
+
+.spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.75) 1px,
+    transparent 1.2px
+  );
+  background-size: 26px 26px;
+  opacity: 0.055;
+  -webkit-mask-image: radial-gradient(
+    240px circle at var(--mx, 50vw) var(--my, 34vh),
+    #000,
+    transparent 72%
+  );
+  mask-image: radial-gradient(
+    240px circle at var(--mx, 50vw) var(--my, 34vh),
+    #000,
+    transparent 72%
+  );
+}
+
+/* the rail and header are slightly translucent so the wash reads through */
+.sidebar {
+  background: linear-gradient(
+    180deg,
+    rgba(13, 14, 17, 0.9),
+    rgba(13, 14, 17, 0.97)
+  );
+  box-shadow: 1px 0 0 rgba(255, 255, 255, 0.015);
+}
+
+.topbar {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 11, 13, 0.7),
+    rgba(10, 11, 13, 0.9)
+  );
+  box-shadow: 0 14px 30px -26px rgba(0, 0, 0, 1);
+}
+
+/* voice orb: ambient halo + slow orbiting arc while listening */
+.orb-halo {
+  position: absolute;
+  inset: -58px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(100, 136, 250, 0.17),
+    transparent 68%
+  );
+  animation: halo-breathe 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.orb-orbit {
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 74%,
+    rgba(100, 136, 250, 0.75) 87%,
+    transparent 100%
+  );
+  -webkit-mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1px)
+  );
+  mask: radial-gradient(
+    farthest-side,
+    transparent calc(100% - 2px),
+    #000 calc(100% - 1px)
+  );
+  animation: spin 7s linear infinite;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 2147483646;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+button {
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: var(--text-faint);
+}
+
+/* ─── Surfaces ─────────────────────────────────────── */
+
+.card {
+  position: relative;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.028),
+      rgba(255, 255, 255, 0) 140px
+    ),
+    rgba(17, 18, 22, 0.74);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* top-edge catch light — cards read as lit from above */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 1px solid rgba(255, 255, 255, 0.045);
+  border-left: 1px solid rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+.card-pad {
+  padding: 18px 20px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+}
+
+/* ─── Typography helpers ───────────────────────────── */
+
+.mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text-faint);
+}
+
+.muted {
+  color: var(--text-faint);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.text-btn {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  transition: color 0.15s ease;
+}
+.text-btn:hover {
+  color: var(--text);
+}
+
+/* ─── Buttons ──────────────────────────────────────── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: var(--r);
+  border: 1px solid var(--line-strong);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+    var(--surface-2);
+  color: var(--text-dim);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    color 0.18s var(--ease),
+    transform 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--surface-3);
+  border-color: #373b45;
+  color: var(--text);
+  transform: var(--lift);
+  box-shadow: var(--shadow-md);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+}
+
+.btn--primary {
+  background: linear-gradient(180deg, #ffffff, #e8e9ec);
+  border-color: #dcdee2;
+  color: #101114;
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    var(--shadow-md);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(180deg, #ffffff, #f5f6f8);
+  border-color: #ffffff;
+  color: #101114;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 10px 26px -14px rgba(255, 255, 255, 0.45),
+    var(--shadow-md);
+}
+
+.btn--danger {
+  background: linear-gradient(180deg, #ec6169, #dc4b53);
+  border-color: #cf444c;
+  color: #fff;
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 26px -14px rgba(229, 84, 92, 0.85);
+}
+
+.btn--danger:hover:not(:disabled) {
+  background: linear-gradient(180deg, #f26d74, #e4545c);
+  border-color: #ef6a71;
+  color: #fff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 14px 34px -14px rgba(229, 84, 92, 1);
+}
+
+.btn--accent {
+  background: linear-gradient(180deg, var(--accent-hi), var(--accent-lo));
+  border-color: var(--accent-lo);
+  color: #0b0d12;
+  font-weight: 600;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 26px -14px rgba(100, 136, 250, 0.95);
+}
+
+.btn--accent:hover:not(:disabled) {
+  background: linear-gradient(180deg, #9db2ff, #5f81f3);
+  border-color: #5f81f3;
+  color: #0b0d12;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 14px 34px -14px rgba(100, 136, 250, 1);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn--danger-quiet {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--red);
+  box-shadow: none;
+}
+
+.btn--danger-quiet:hover:not(:disabled) {
+  background: var(--red-soft);
+  border-color: rgba(229, 84, 92, 0.4);
+  color: var(--red);
+  box-shadow: none;
+}
+
+/* ─── Forms ────────────────────────────────────────── */
+
+.input {
+  width: 100%;
+  padding: 10px 13px;
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  font-size: 13.5px;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.input:hover {
+  border-color: #343842;
+}
+
+.input:focus {
+  border-color: var(--accent);
+  background: var(--surface-3);
+}
+
+/* The border already signals focus on text fields. */
+.input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(100, 136, 250, 0.15);
+}
+.composer textarea:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+/* ─── Navigation ───────────────────────────────────── */
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: var(--r);
+  color: var(--text-faint);
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  transition:
+    background 0.18s var(--ease),
+    color 0.18s var(--ease),
+    transform 0.18s var(--ease);
+}
+
+.nav-item:hover {
+  background: linear-gradient(90deg, var(--surface-2), rgba(29, 31, 37, 0.5));
+  color: var(--text-dim);
+  transform: translateX(2px);
+}
+
+.nav-item.is-active {
+  background: linear-gradient(
+    90deg,
+    rgba(100, 136, 250, 0.13),
+    rgba(29, 31, 37, 0.9) 55%,
+    var(--surface-3)
+  );
+  color: var(--text);
+  transform: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+/* accent marker that grows in when a section becomes active */
+.nav-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+  box-shadow: 0 0 10px -1px rgba(100, 136, 250, 0.9);
+  transform: translateY(-50%) scaleY(0);
+  transform-origin: center;
+  animation: nav-marker 0.32s var(--ease) forwards;
+}
+
+@keyframes nav-marker {
+  to {
+    transform: translateY(-50%) scaleY(1);
+  }
+}
+
+/* ─── Rows, chips, badges ──────────────────────────── */
+
+.row {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: var(--r);
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  transition:
+    background 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    transform 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+
+/* one-shot light sweep across a row as the pointer arrives */
+.row::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.07) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+}
+
+.row:hover::after {
+  animation: sweep 0.65s var(--ease) 1;
+}
+
+.row:hover {
+  background: var(--surface-3);
+  border-color: var(--line);
+  transform: var(--lift);
+  box-shadow: var(--shadow-md);
+}
+
+.row--static:hover {
+  background: var(--surface-2);
+  border-color: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: var(--r-sm);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), transparent),
+    var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--text-faint);
+}
+
+/* live indicators read as lit: soft bloom + slow pulse */
+.status-dot--live {
+  animation: soft-pulse 2.4s ease-in-out infinite;
+  box-shadow: 0 0 7px -1.5px rgba(255, 255, 255, 0.55);
+}
+
+/* ─── Empty states ─────────────────────────────────── */
+
+.empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 44px 24px;
+  text-align: center;
+}
+
+.empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  border: 1px solid var(--line-strong);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    var(--shadow-sm);
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.empty__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.empty__hint {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--text-faint);
+  max-width: 430px;
+}
+
+/* ─── Notices ──────────────────────────────────────── */
+
+.notice {
+  padding: 10px 12px;
+  border-radius: var(--r);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.notice--error {
+  background: var(--red-soft);
+  border: 1px solid rgba(229, 84, 92, 0.35);
+  color: #f0a2a7;
+}
+
+.notice--info {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+}
+
+/* ─── Brand mark ───────────────────────────────────── */
+
+.mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: linear-gradient(180deg, #24262e, #1a1c22);
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  font-weight: 600;
+  flex-shrink: 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    var(--shadow-sm);
+  text-shadow: 0 0 14px rgba(100, 136, 250, 0.55);
+}
+
+.wordmark {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+/* ─── Composer (chat input) ────────────────────────── */
+
+.composer {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition:
+    border-color 0.2s var(--ease),
+    background 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+
+.composer:hover {
+  border-color: #343842;
+}
+
+.composer:focus-within {
+  border-color: var(--accent);
+  background: var(--surface-3);
+  box-shadow:
+    0 0 0 4px rgba(100, 136, 250, 0.14),
+    0 14px 36px -22px rgba(100, 136, 250, 0.95);
+}
+
+.composer textarea {
+  flex: 1;
+  min-height: 36px;
+  max-height: 120px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  caret-color: var(--accent);
+}
+
+.btn--icon {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 9px;
+  flex-shrink: 0;
+}
+
+.suggestion {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--line-strong);
+  color: var(--text-faint);
+  font-size: 12px;
+  transition:
+    background 0.18s var(--ease),
+    color 0.18s var(--ease),
+    border-color 0.18s var(--ease),
+    transform 0.18s var(--ease),
+    box-shadow 0.18s var(--ease);
+}
+
+.suggestion:hover {
+  background: var(--surface-2);
+  border-color: #3a3e48;
+  color: var(--text);
+  transform: var(--lift);
+  box-shadow: var(--shadow-sm);
+}
+
+.suggestion:active {
+  transform: translateY(0);
+}
+
+/* ─── Chat ─────────────────────────────────────────── */
+
+.bubble {
+  padding: 11px 15px;
+  border-radius: 12px 12px 4px 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), transparent 44px),
+    var(--surface-3);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre-line;
+}
+
+/* ─── Progress bars ────────────────────────────────── */
+
+.bar {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--surface-3);
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.bar__fill {
+  position: relative;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent-hi));
+  transition: width 0.7s var(--ease);
+  overflow: hidden;
+}
+
+/* soft highlight travelling the length of a live bar */
+.bar__fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    transparent 75%
+  );
+  transform: translateX(-120%);
+  animation: sweep 2.8s var(--ease) infinite;
+}
+
+/* pipeline track: while a task is running the fill carries
+   moving stripes so progress visibly flows instead of sitting */
+.track-fill {
+  position: relative;
+  height: 100%;
+  border-radius: var(--r-sm);
+  background: linear-gradient(90deg, var(--accent-lo), var(--accent-hi));
+  transition: width 1s var(--ease);
+  overflow: hidden;
+  box-shadow: 0 0 14px -4px rgba(100, 136, 250, 0.85);
+}
+
+.track-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.3) 0 9px,
+    rgba(255, 255, 255, 0) 9px 20px
+  );
+  transition: opacity 0.3s ease;
+}
+
+.track-fill.is-flowing::after {
+  opacity: 1;
+  animation: stripes 0.9s linear infinite;
+}
+
+@keyframes stripes {
+  to {
+    background-position: 40px 0;
+  }
+}
+
+/* ─── Pipeline steps ───────────────────────────────── */
+
+.step-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1.5px solid var(--line-strong);
+  color: var(--text-faint);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.25s var(--ease);
+}
+
+.step-dot--done {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  color: var(--accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.step-dot--active {
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgba(100, 136, 250, 0.3),
+    var(--surface-3) 72%
+  );
+  border-color: var(--accent);
+  color: var(--accent);
+  animation: breathe 2.6s ease-in-out infinite;
+}
+
+/* ─── Motion ───────────────────────────────────────── */
+
+.enter {
+  animation: fade-up 0.3s var(--ease) both;
+}
+
+/* plays whenever the active section changes */
+.view-enter {
+  animation: view-in 0.34s var(--ease) both;
+}
+
+/* right column arrives as a staggered cascade */
+.right-col > * {
+  animation: fade-up 0.45s var(--ease) both;
+}
+.right-col > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.right-col > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.right-col > *:nth-child(3) {
+  animation-delay: 0.19s;
+}
+.right-col > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
+.right-col > *:nth-child(5) {
+  animation-delay: 0.33s;
+}
+.right-col > *:nth-child(n + 6) {
+  animation-delay: 0.4s;
+}
+
+/* idle mark in the empty state — slow, barely-there bob */
+.mark--float {
+  animation: float-soft 7s ease-in-out infinite;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.skeleton {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-2) 20%,
+    var(--surface-3) 50%,
+    var(--surface-2) 80%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s linear infinite;
+}
+
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 13px;
+  margin-left: 3px;
+  vertical-align: -2px;
+  background: var(--accent);
+  animation: blink 1s step-end infinite;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+  border-top-color: var(--accent);
+  animation: spin 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

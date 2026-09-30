@@ -1,0 +1,11 @@
+{
+  "title": "NOVA",
+  "description": "A personal computer agent that plans and runs tasks on your machine, with every step shown before it happens.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

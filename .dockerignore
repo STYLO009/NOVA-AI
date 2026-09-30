@@ -1,0 +1,35 @@
+# ── build context hygiene ────────────────────────────────────────────────────
+.git
+.gitignore
+.idea
+.vscode
+*.log
+
+# dependencies / build output
+node_modules
+dist
+.vite
+.oxfmtcache
+
+# Python
+**/__pycache__
+**/*.py[cod]
+backend/.venv
+backend/data
+backend/.env
+*.egg-info
+
+# local environment + secrets
+.env
+.env.*
+!.env.example
+backend/.env.example
+
+# docs & tooling (not needed inside either image)
+*.md
+!README.md
+deploy/*.md
+scripts
+tests
+src/**/*test*
+src/**/*.test.tsx
